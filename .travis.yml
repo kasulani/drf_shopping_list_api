@@ -1,0 +1,23 @@
+language: python
+python:
+  - "3.6.3"
+
+install:
+  - pip install -r requirements.txt
+
+services:
+  - postgresql
+
+#before_script:
+#  - psql -c "CREATE ROLE shoplist PASSWORD 'shoplist' CREATEDB CREATEROLE INHERIT LOGIN;" -U postgres
+#  - psql -c "create database shoplist;" -U postgres
+#  - python run.py db init
+#  - python run.py db migrate
+#  - python run.py db upgrade
+
+# command to run tests
+script:
+  - nosetests --with-coverage
+
+after_success:
+  - coveralls

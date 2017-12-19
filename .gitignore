@@ -1,0 +1,6 @@
+.idea
+venv/
+.env
+api/__pycache__/
+api/migrations/__pycache__/
+config/__pycache__/
