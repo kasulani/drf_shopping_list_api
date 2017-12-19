@@ -24,6 +24,7 @@ Tools used during the development of this API are;
 - [Postgresql](https://www.postgresql.org/) - this is a database server
 ## Requirements
 - Use Python 3.x.x+
+- Use Django 2.x.x+
 ## Tests
 todo
 ## Running the application
