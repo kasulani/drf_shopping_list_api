@@ -13,14 +13,18 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+BASE_DIR = "../" + os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '_w*5*o6uq0x0kg(l8l6z3t23f)(%-7-w-w$z8ka-tnwtg2vk+y'
+
+# override the default secret key using the one set in the env variable
+SECRET_KEY = os.getenv('SECRET_KEY') \
+    if(os.getenv('SECRET_KEY') is not None) \
+    else '_w*5*o6uq0x0kg(l8l6z3t23f)(%-7-w-w$z8ka-tnwtg2vk+y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -92,7 +96,10 @@ REST_FRAMEWORK = {
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
+    ],
+    # This sets the default test format to JSON for all requests instead
+    # of the default standard multipart form requests
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
 }
 
 
