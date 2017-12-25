@@ -99,7 +99,10 @@ REST_FRAMEWORK = {
     ],
     # This sets the default test format to JSON for all requests instead
     # of the default standard multipart form requests
-    'TEST_REQUEST_DEFAULT_FORMAT': 'json'
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+    # API versioning scheme, the version will be available via version
+    # parameter to the view
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning'
 }
 
 
