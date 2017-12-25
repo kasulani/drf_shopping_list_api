@@ -4,3 +4,4 @@ venv/
 api/__pycache__/
 api/migrations/__pycache__/
 config/__pycache__/
+api/tests/__pycache__/
