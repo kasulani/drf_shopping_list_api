@@ -3,6 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime, timedelta
 from django.conf import settings
+
 # Create your models here.
 
 
@@ -12,10 +13,6 @@ class UserProfile(models.Model):
     This model extends the user model provided by django auth
     """
 
-    # user's first name
-    first_name = models.CharField(max_length=255, null=True)
-    # user's last name
-    last_name = models.CharField(max_length=255, null=True)
     # one sentence description about the user
     description = models.CharField(max_length=255, null=True)
     # JWT token set after authentication of user
