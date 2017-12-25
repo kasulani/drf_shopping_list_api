@@ -1,36 +1,13 @@
-from django.test import TestCase
-from api.models import UserProfile
-from django.contrib.auth.models import User
+from api.tests.base import AuthBaseTest
 
 
-class UserProfileTest(TestCase):
+class UserProfileTest(AuthBaseTest):
     """
     Test User Profile model
     """
-    user = None
-    user_profile = None
-    token = None
-
-    def setUp(self):
-        # create a user
-        self.user = User.objects.create_user(
-            username='test_user',
-            email='test@mail.com',
-            password='testing')
-        # create a user profile
-        self.user_profile = UserProfile.objects.create(
-            first_name='test',
-            last_name='user',
-            description='i am a test user',
-            user=self.user
-        )
-        # set token
-        self.token = self.user_profile.generate_auth_token(expiration=1)
 
     def test_user_profile(self):
         # test if the profile created in the setup exists
-        self.assertEqual(self.user_profile.first_name, 'test')
-        self.assertEqual(self.user_profile.last_name, 'user')
         self.assertEqual(self.user_profile.description, 'i am a test user')
 
     def test_generate_auth_token(self):
