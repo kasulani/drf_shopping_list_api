@@ -20,7 +20,7 @@ class UserProfileViewTest(AuthBaseTest):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_get_a_single_user_profile(self):
-        # test if you can retrieve a single user profile
+        # test if you can retrieve an existing single user profile
         # by supplying a username in the url
         url = reverse(
             'shop_list_api:shop-list-api-user',
@@ -33,6 +33,19 @@ class UserProfileViewTest(AuthBaseTest):
         serialized = self.get_expected_single_user_profile()
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_a_single_non_existing_user_profile(self):
+        # test if you can retrieve a non existing single user profile
+        # by supplying an invalid username in the url
+        url = reverse(
+            'shop_list_api:shop-list-api-user',
+            kwargs={
+                'version': 'v1',
+                'username': 'testuser'
+            }
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_create_a_user_profile_with_valid_data(self):
         # test creating a user with valid data
