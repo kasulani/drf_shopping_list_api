@@ -62,11 +62,11 @@ class UserProfileView(viewsets.ViewSet):
         This function returns details of a single user
         :param request: request object
         :param version: api version number
-        :param username:
-        :return:
+        :param username: username
+        :return: serialized user profile
         """
 
-        # find the user
+        # first find the user
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
@@ -75,6 +75,7 @@ class UserProfileView(viewsets.ViewSet):
             )
         # this point the user exists, find user profile
         profile = UserProfile.objects.get(user=user)
+        # serialize the user profile data
         serializer = SingleUserSerializer(
             data={
                 'first_name': user.first_name,
@@ -85,15 +86,9 @@ class UserProfileView(viewsets.ViewSet):
                 'date_joined': user.date_joined
             }
         )
-        if serializer.is_valid():
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK
-            )
-        return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        serializer.is_valid()
+        # respond with serialized data
+        return Response(data=serializer.data)
 
     def update(self, request, version, pk=None):
         # update a single user profile
