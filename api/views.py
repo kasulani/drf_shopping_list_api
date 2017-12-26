@@ -8,7 +8,11 @@ from api.serializers import (
 )
 from api.models import UserProfile
 from django.contrib.auth.models import User
-from api.utils import fetch_all_user_profiles
+from api.utils import (
+    fetch_all_user_profiles,
+    fetch_single_user,
+    create_user_profile
+)
 
 
 # Create your views here.
@@ -49,34 +53,29 @@ class UserProfileView(viewsets.ViewSet):
         :param version:
         :return:
         """
-        # create a user account and profile
+
+        # compose the data
         data = {
             'username': request.data.get('username', None),
             'email': request.data.get('email', None),
             'password': request.data.get('password', None),
-            'first_name': request.data.get('first_name', None),
-            'last_name': request.data.get('last_name', None)
+            'first_name': request.data.get('first_name', ''),
+            'last_name': request.data.get('last_name', ''),
+            'description': request.data.get('description', '')
         }
-        # create a user account in the django auth table
-        serializer = UserSerializer(data=data)
-        if serializer.is_valid():
-            # save the user account
-            serializer.save()
-            # create a user profile
-            user_profile = UserProfile.objects.create(
-                description=request.data.get('description', ''),
-                user=User.objects.get_by_natural_key(data['username'])
+        # go ahead and create a user profile
+        if create_user_profile(data=data):
+            # serialize the created user profile
+            serializer = CompositeUserSerializer(
+                data=fetch_single_user(username=data['username'])
             )
-            serializer = UserProfileSerializer(user_profile)
+            serializer.is_valid()
+            # respond with the created user profile
             return Response(
                 data=serializer.data,
                 status=status.HTTP_201_CREATED
             )
-
-        return Response(
-            data=serializer.errors,
-            status=status.HTTP_400_BAD_REQUEST
-        )
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def retrieve(request, version, username):
@@ -89,29 +88,12 @@ class UserProfileView(viewsets.ViewSet):
         :return: serialized user profile
         """
 
-        # first find the user
-        try:
-            user = User.objects.get(username=username)
-        except User.DoesNotExist:
-            return Response(
-                status=status.HTTP_404_NOT_FOUND
-            )
-        # at this point the user exists, find user profile
-        profile = UserProfile.objects.get(user=user)
-        # serialize the user profile data
-        serializer = CompositeUserSerializer(
-            data={
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'email': user.email,
-                'description': profile.description,
-                'last_login': user.last_login,
-                'date_joined': user.date_joined
-            }
-        )
-        serializer.is_valid()
-        # respond with serialized data
-        return Response(data=serializer.data)
+        data = fetch_single_user(username=username)
+        if data is not None:
+            serializer = CompositeUserSerializer(data=data)
+            serializer.is_valid()
+            return Response(data=serializer.data)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     def update(self, request, version, pk=None):
         # update a single user profile
