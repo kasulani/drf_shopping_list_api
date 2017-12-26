@@ -58,15 +58,23 @@ class UserProfileView(viewsets.ViewSet):
 
     @staticmethod
     def retrieve(request, version, username):
-        # get details of a single user profile
+        """
+        This function returns details of a single user
+        :param request: request object
+        :param version: api version number
+        :param username:
+        :return:
+        """
+
+        # find the user
         try:
             user = User.objects.get(username=username)
-            profile = UserProfile.objects.get(user=user)
-        except Exception as ex:
+        except User.DoesNotExist:
             return Response(
-                data=ex.message,
                 status=status.HTTP_404_NOT_FOUND
             )
+        # this point the user exists, find user profile
+        profile = UserProfile.objects.get(user=user)
         serializer = SingleUserSerializer(
             data={
                 'first_name': user.first_name,
