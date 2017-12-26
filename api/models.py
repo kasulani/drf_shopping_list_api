@@ -13,6 +13,8 @@ class UserProfile(models.Model):
     This model extends the user model provided by django auth
     """
 
+    # explicitly set default manager
+    objects = models.Manager()
     # one sentence description about the user
     description = models.CharField(max_length=255, null=True)
     # JWT token set after authentication of user
