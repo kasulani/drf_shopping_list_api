@@ -3,9 +3,8 @@ from api.models import UserProfile
 from django.contrib.auth.models import User
 
 
-class SingleUserSerializer(serializers.Serializer):
+class CompositeUserSerializer(serializers.Serializer):
     """
-    Serializer for a single user retrieved via the api.
     This serializer combines data from django auth user
     and user profile model
     """
