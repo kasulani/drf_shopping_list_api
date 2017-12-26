@@ -4,10 +4,11 @@ from rest_framework.views import status
 from api.serializers import (
     UserProfileSerializer,
     UserSerializer,
-    SingleUserSerializer
+    CompositeUserSerializer
 )
 from api.models import UserProfile
 from django.contrib.auth.models import User
+from api.utils import fetch_all_user_profiles
 
 
 # Create your views here.
@@ -15,18 +16,39 @@ from django.contrib.auth.models import User
 
 class UserProfileView(viewsets.ViewSet):
     """
-    View for the User Profile model
+    ViewSet for the User Profile. A user profile is a
+    combination of data from two models, i.e, the User
+    model from django auth and UserProfile model
     """
 
     queryset = UserProfile.objects.all()
 
-    def list(self, request, version):
+    @staticmethod
+    def list(request, version):
+        """
+        This view function GETs all user profiles
+        :param request:
+        :param version:
+        :return:
+        """
+
         # get all user profiles
-        serializer = UserProfileSerializer(self.queryset, many=True)
+        serializer = CompositeUserSerializer(fetch_all_user_profiles(), many=True)
         return Response(serializer.data)
 
     @staticmethod
     def create(request, version):
+        """
+        This view function creates/POSTs a new user. A user data is
+        stored in two models, i.e, User and UserProfile.
+        Therefore the process of creating a user involves two
+        steps;
+        step 1: create a user account in the django auth User model
+        step 2: create a user profile in the UserProfile model
+        :param request:
+        :param version:
+        :return:
+        """
         # create a user account and profile
         data = {
             'username': request.data.get('username', None),
@@ -59,7 +81,8 @@ class UserProfileView(viewsets.ViewSet):
     @staticmethod
     def retrieve(request, version, username):
         """
-        This function returns details of a single user
+        This view function GETs data of a single user
+        as a user profile
         :param request: request object
         :param version: api version number
         :param username: username
@@ -73,10 +96,10 @@ class UserProfileView(viewsets.ViewSet):
             return Response(
                 status=status.HTTP_404_NOT_FOUND
             )
-        # this point the user exists, find user profile
+        # at this point the user exists, find user profile
         profile = UserProfile.objects.get(user=user)
         # serialize the user profile data
-        serializer = SingleUserSerializer(
+        serializer = CompositeUserSerializer(
             data={
                 'first_name': user.first_name,
                 'last_name': user.last_name,
