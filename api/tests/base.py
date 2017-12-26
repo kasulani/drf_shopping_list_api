@@ -3,7 +3,7 @@ from api.models import UserProfile
 from django.contrib.auth.models import User
 from api.serializers import (
     UserProfileSerializer,
-    SingleUserSerializer
+    CompositeUserSerializer
 )
 
 
@@ -13,7 +13,6 @@ class AuthBaseTest(APITestCase):
     """
 
     client = APIClient()
-    # base_url = 'http://localhost:8000/'
 
     def setUp(self):
         # create a user
@@ -61,11 +60,22 @@ class AuthBaseTest(APITestCase):
     @staticmethod
     def get_all_expected_user_profiles():
         # get all user profiles in the db and return as a serialized object
-        return UserProfileSerializer(UserProfile.objects.all(), many=True)
+        results_queryset = []
+        for user in User.objects.all():
+            profile = UserProfile.objects.get(user=user)
+            results_queryset.append({
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
+                'description': profile.description,
+                'last_login': user.last_login,
+                'date_joined': user.date_joined
+            })
+        return CompositeUserSerializer(results_queryset, many=True)
 
     def get_expected_single_user_profile(self):
         # this returns the test user profile
-        serializer = SingleUserSerializer(
+        serializer = CompositeUserSerializer(
             data={
                 'first_name': self.user.first_name,
                 'last_name': self.user.last_name,
