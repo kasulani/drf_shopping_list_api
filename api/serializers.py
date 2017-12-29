@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from api.models import UserProfile
-from django.contrib.auth.models import User
+# from api.models import UserProfile
+# from django.contrib.auth.models import User
 
 
 class CompositeUserSerializer(serializers.Serializer):
@@ -16,24 +16,24 @@ class CompositeUserSerializer(serializers.Serializer):
     date_joined = serializers.DateTimeField()
 
 
-class UserSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the  User model in django auth
-    """
-    class Meta:
-        model = User
-        fields = '__all__'
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the User Profile model
-    """
-    class Meta:
-        model = UserProfile
-        fields = (
-            'description',
-            'token',
-            'created_on',
-            'updated_on'
-        )
+# class UserSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer for the  User model in django auth
+#     """
+#     class Meta:
+#         model = User
+#         fields = '__all__'
+#
+#
+# class UserProfileSerializer(serializers.ModelSerializer):
+#     """
+#     Serializer for the User Profile model
+#     """
+#     class Meta:
+#         model = UserProfile
+#         fields = (
+#             'description',
+#             'token',
+#             'created_on',
+#             'updated_on'
+#         )
