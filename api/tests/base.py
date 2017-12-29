@@ -1,10 +1,12 @@
 from rest_framework.test import APITestCase, APIClient
 from api.models import UserProfile
 from django.contrib.auth.models import User
+from django.urls import reverse
 from api.serializers import (
-    UserProfileSerializer,
+    # UserProfileSerializer,
     CompositeUserSerializer
 )
+import json
 
 
 class AuthBaseTest(APITestCase):
@@ -13,10 +15,11 @@ class AuthBaseTest(APITestCase):
     """
 
     client = APIClient()
+    token = ""
 
     def setUp(self):
         # create a user
-        self.user = User.objects.create_user(
+        self.user = User.objects.create_superuser(
             username='test_user',
             email='test@mail.com',
             password='testing',
@@ -30,32 +33,48 @@ class AuthBaseTest(APITestCase):
             user=self.user
         )
 
-        # set token
-        self.token = self.user_profile.generate_auth_token(expiration=1)
-
         # test data
         self.valid_data = {
             # mandatory
             'username': 'another_test_user',
-            'email': 'another@mail.com',
             'password': 'another',
             # optional
+            'email': 'another@mail.com',
             'first_name': 'another',
             'last_name': 'user',
             'description': 'yet another test user'
         }
 
-        # if one or more of the mandatory fields is missing, data is invalid
+        # if one or more of the mandatory fields is missing,
+        # data is invalid
         self.invalid_data = {
             # mandatory
             'username': '',
-            'email': 'another@mail.com',
-            'password': 'another',
+            'password': '',
             # optional
+            'email': 'another@mail.com',
             'first_name': '',
             'last_name': '',
             'description': ''
         }
+
+    def login_client(self):
+        # login
+        response = self.client.post(
+            reverse('create-token'),
+            data=json.dumps(
+                {
+                    'username': 'test_user',
+                    'password': 'testing'
+                }
+            ),
+            content_type='application/json'
+        )
+        self.token = response.data['token']
+        self.client.credentials(
+            HTTP_AUTHORIZATION='Bearer ' + self.token
+        )
+        self.client.login(username='test_user', password='testing')
 
     @staticmethod
     def get_all_expected_user_profiles():
