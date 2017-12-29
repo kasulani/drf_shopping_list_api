@@ -68,5 +68,5 @@ def create_user_profile(data):
             user=user
         )
         return True
-    except Exception as ex:
+    except Exception:
         return False
