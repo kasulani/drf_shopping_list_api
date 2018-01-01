@@ -4,7 +4,7 @@ from django.urls import reverse
 import json
 
 
-class UserProfileViewTest(AuthBaseTest):
+class UserProfileTest(AuthBaseTest):
     """
     Tests for the /users/ endpoints
     """
