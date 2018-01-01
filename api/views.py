@@ -33,11 +33,36 @@ class ListAllUsers(APIView):
 
     def get(self, request, version, format=None):
         """
-        Return user profile details for a single user specified
-        by the parameter username
+        Return a list of all users.
         """
         serializer = CompositeUserSerializer(fetch_all_user_profiles(), many=True)
         return Response(serializer.data)
+
+
+class ManageAPIUsers(APIView):
+    """
+    This view is used by admin users to manage users in the system
+
+    Admin users can use this view to; Retrieve, update or delete
+
+    * Requires token authentication
+    * Only admin users are able to access this view
+    """
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAdminUser,)
+
+    def get(self, request, version, username, format=None):
+        """
+        Return user profile details for a single user specified
+        by the parameter <username>
+        """
+        data = fetch_single_user(username=username)
+        if data is not None:
+            serializer = CompositeUserSerializer(data=data)
+            serializer.is_valid()
+            return Response(data=serializer.data)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
 
 class RegisterUsers(APIView):
     """
