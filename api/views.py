@@ -12,7 +12,6 @@ from api.serializers import (
     # UserSerializer,
     CompositeUserSerializer
 )
-from api.models import UserProfile
 from api.utils import (
     fetch_all_user_profiles,
     fetch_single_user,
@@ -34,13 +33,13 @@ class ListAllUsers(APIView):
 
     def get(self, request, version, format=None):
         """
-        Return a list of all users.
+        Return user profile details for a single user specified
+        by the parameter username
         """
         serializer = CompositeUserSerializer(fetch_all_user_profiles(), many=True)
         return Response(serializer.data)
 
-
-class RegisterUser(APIView):
+class RegisterUsers(APIView):
     """
     View to create a user in the system
 
@@ -89,7 +88,7 @@ class RegisterUser(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class SingleUserDetail(APIView):
+class SingleUserDetails(APIView):
     """
     Retrieve, update or delete a user instance.
 
@@ -100,9 +99,9 @@ class SingleUserDetail(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, version, username, format=None):
+    def get(self, request, version, format='application\json'):
         """
-        Retrieve a single user specified by username
+        Retrieve user profile of the user in the request object
 
         :param request:
         :param version:
@@ -110,36 +109,7 @@ class SingleUserDetail(APIView):
         :param format:
         :return:
         """
-
-        user = None
-        try:
-            if request.user == User.objects.get(username=username):
-                """
-                this branch will be executed if the request user matches
-                the User object that matches the username parameter
-                """
-                user = request.user.username
-            else:
-                """
-                this branch will be executed when the request user does not
-                match the username parameter. The user requesting to see
-                details of another user should be an admin user
-                """
-                if request.user.is_superuser:
-                    user = username
-
-            if user is not None:
-                """
-                if the user is not None, go ahead attempt to fetch details for the
-                user and respond appropriately
-                """
-                data = fetch_single_user(username=user)
-                if data is not None:
-                    serializer = CompositeUserSerializer(data=data)
-                    serializer.is_valid()
-                    return Response(data=serializer.data)
-                # return Response(status=status.HTTP_404_NOT_FOUND)
-        except User.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+        data = fetch_single_user(username=request.user.username)
+        serializer = CompositeUserSerializer(data=data)
+        serializer.is_valid()
+        return Response(data=serializer.data)
