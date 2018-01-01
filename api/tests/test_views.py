@@ -43,20 +43,42 @@ class UserProfileViewTest(AuthBaseTest):
         # assert status code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # def test_get_a_single_non_existing_user_profile(self):
-    #     # test if you can retrieve a non existing single user profile
-    #     # by supplying an invalid username in the url
-    #     url = reverse(
-    #         'shop_list_api:shop-list-api-user',
-    #         kwargs={
-    #             'version': 'v1',
-    #             'username': 'testuser'
-    #         }
-    #     )
-    #     self.login_client()
-    #     response = self.client.get(url)
-    #     # assert status code
-    #     self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    def test_get_a_single_non_existing_user_profile(self):
+        # test if admin user can retrieve a non existing single user profile
+        # by supplying an invalid username in the url
+        url = reverse(
+            'shop_list_api:shop-list-manage-user',
+            kwargs={
+                'version': 'v1',
+                'username': 'testuser'
+            }
+        )
+        self.login_client()
+        response = self.client.get(url)
+        # assert status code
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_get_a_single_existing_user_profile(self):
+        # test if admin user can retrieve a existing single user profile
+        # by supplying an invalid username in the url
+        url = reverse(
+            'shop_list_api:shop-list-manage-user',
+            kwargs={
+                'version': 'v1',
+                'username': 'test_user'
+            }
+        )
+        self.login_client()
+        response = self.client.get(url)
+        serialized = self.get_expected_single_user_profile()
+        # assert data is as expected
+        self.assertEqual(response.data['first_name'], serialized.data['first_name'])
+        self.assertEqual(response.data['last_name'], serialized.data['last_name'])
+        self.assertEqual(response.data['email'], serialized.data['email'])
+        self.assertEqual(response.data['description'], serialized.data['description'])
+        self.assertEqual(response.data['date_joined'], serialized.data['date_joined'])
+        # assert status code
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_a_user_profile_with_valid_data(self):
         # test creating a user with valid data
