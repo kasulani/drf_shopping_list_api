@@ -6,7 +6,7 @@ import json
 
 class UserProfileViewTest(AuthBaseTest):
     """
-    Tests for the user profile CRUD endpoints
+    Tests for the /users/ endpoints
     """
 
     def test_get_all_user_profile(self):
@@ -80,6 +80,11 @@ class UserProfileViewTest(AuthBaseTest):
         # assert status code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+
+class AuthRegisterUserTest(AuthBaseTest):
+    """
+    Tests for /auth/register endpoint
+    """
     def test_create_a_user_profile_with_valid_data(self):
         # test creating a user with valid data
         url = reverse(
