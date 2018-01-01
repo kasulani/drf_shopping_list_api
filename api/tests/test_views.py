@@ -23,9 +23,8 @@ class UserProfileViewTest(AuthBaseTest):
         # assert status code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_a_single_user_profile(self):
-        # test if you can retrieve an existing single user profile
-        # by supplying a username in the url
+    def test_get_own_user_profile(self):
+        # test if you can retrieve a logged in user profile
         url = reverse(
             'shop_list_api:shop-list-api-user',
             kwargs={
