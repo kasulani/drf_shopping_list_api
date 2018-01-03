@@ -171,8 +171,7 @@ class ResetUserPassword(UpdateAPIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        return User.objects.all()
+    queryset = User.objects.all()
 
     def put(self, request, *args, **kwargs):
         """
@@ -200,8 +199,7 @@ class LoginUser(CreateAPIView):
     """
     permission_classes = (AllowAny,)
 
-    def get_queryset(self):
-        return User.objects.all()
+    queryset = User.objects.all()
 
     def post(self, request, *args, **kwargs):
         username = request.data.get('username', '')
@@ -231,8 +229,7 @@ class LogoutUser(ListAPIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get_queryset(self):
-        return User.objects.all()
+    queryset = User.objects.all()
 
     def get(self, request, *args, **kwargs):
         logout(request)
