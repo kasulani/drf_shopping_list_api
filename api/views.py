@@ -19,6 +19,7 @@ from api.utils import (
     update_user_profile,
     user_is_permitted
 )
+from django.contrib.auth.models import User
 
 
 # API endpoint views
@@ -42,31 +43,6 @@ class ListAllUsers(APIView):
             many=True
         )
         return Response(serializer.data)
-
-
-# class ManageAPIUsers(APIView):
-#     """
-#     This view is used by admin users to manage users in the system
-#
-#     Admin users can use this view to; Retrieve, update or delete
-#
-#     * Requires token authentication
-#     * Only admin users are able to access this view
-#     """
-#     authentication_classes = (JSONWebTokenAuthentication,)
-#     permission_classes = (IsAdminUser,)
-#
-#     def get(self, request, version, username, format=None):
-#         """
-#         Return user profile details for a single user specified
-#         by the parameter <username>
-#         """
-#         data = fetch_single_user(username=username)
-#         if data is not None:
-#             serializer = CompositeUserSerializer(data=data)
-#             serializer.is_valid()
-#             return Response(data=serializer.data)
-#         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class RegisterUsers(APIView):
@@ -176,3 +152,31 @@ class SingleUserDetails(APIView):
                 return Response(data=serializer.data)
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class ResetUserPassword(UpdateAPIView):
+    """
+    View to update password of a logged in user
+    """
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return User.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        """
+        Update password of the user in the request object
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        data = {
+            'username': request.user.username,
+            'password': request.data.get('password', '')
+        }
+        if update_user_profile(data=data):
+            return Response(status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)

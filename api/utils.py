@@ -22,6 +22,7 @@ def user_is_permitted(request, username):
     return request.user.username == username \
            or request.user.is_superuser
 
+
 def fetch_all_user_profiles():
     """
     This function returns a query set that holds
@@ -110,11 +111,11 @@ def is_safe_to_save(data, user):
             and data['password'] != '':
         user.set_password(data['password'])
         save = True
-    if 'first_name' \
+    if 'first_name' in data \
             and data['first_name'] != '':
         user.first_name = data['first_name']
         save = True
-    if 'last_name' \
+    if 'last_name' in data \
             and data['last_name'] != '':
         user.last_name = data['last_name']
         save = True
@@ -127,6 +128,7 @@ def update_user_profile(data):
     :return:
     """
     try:
+        updated = False
         # find the user to update
         user = User.objects.get(
             username=data['username']
@@ -134,14 +136,14 @@ def update_user_profile(data):
         # update user data
         if is_safe_to_save(data, user):
             user.save()
-        save = False
+            updated = True
         # update user profile
         profile = UserProfile.objects.get(user=user)
-        if data['description'] != '':
+        if 'description' in data \
+                and data['description'] != '':
             profile.description = data['description']
-            save = True
-        if save:
             profile.save()
-        return True
+            updated = True
+        return updated
     except Exception:
         return False
