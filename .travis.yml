@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.6.3"
+
+install:
+  - pip install -r requirements.txt
+
+services:
+  - postgresql
+
+# command to run tests
+script:
+  - coverage run --source='.' manage.py test && coverage report
+
+after_success:
+  - coveralls
