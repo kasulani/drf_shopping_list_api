@@ -1,12 +1,12 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView, status
+from rest_framework.generics import UpdateAPIView
 from rest_framework.permissions import (
     IsAuthenticated,
     IsAdminUser,
     AllowAny
 )
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from django.contrib.auth.models import User
 from api.serializers import (
     # UserProfileSerializer,
     # UserSerializer,
@@ -15,7 +15,9 @@ from api.serializers import (
 from api.utils import (
     fetch_all_user_profiles,
     fetch_single_user,
-    create_user_profile
+    create_user_profile,
+    update_user_profile,
+    user_is_permitted
 )
 
 
@@ -35,33 +37,36 @@ class ListAllUsers(APIView):
         """
         Return a list of all users.
         """
-        serializer = CompositeUserSerializer(fetch_all_user_profiles(), many=True)
+        serializer = CompositeUserSerializer(
+            fetch_all_user_profiles(),
+            many=True
+        )
         return Response(serializer.data)
 
 
-class ManageAPIUsers(APIView):
-    """
-    This view is used by admin users to manage users in the system
-
-    Admin users can use this view to; Retrieve, update or delete
-
-    * Requires token authentication
-    * Only admin users are able to access this view
-    """
-    authentication_classes = (JSONWebTokenAuthentication,)
-    permission_classes = (IsAdminUser,)
-
-    def get(self, request, version, username, format=None):
-        """
-        Return user profile details for a single user specified
-        by the parameter <username>
-        """
-        data = fetch_single_user(username=username)
-        if data is not None:
-            serializer = CompositeUserSerializer(data=data)
-            serializer.is_valid()
-            return Response(data=serializer.data)
-        return Response(status=status.HTTP_404_NOT_FOUND)
+# class ManageAPIUsers(APIView):
+#     """
+#     This view is used by admin users to manage users in the system
+#
+#     Admin users can use this view to; Retrieve, update or delete
+#
+#     * Requires token authentication
+#     * Only admin users are able to access this view
+#     """
+#     authentication_classes = (JSONWebTokenAuthentication,)
+#     permission_classes = (IsAdminUser,)
+#
+#     def get(self, request, version, username, format=None):
+#         """
+#         Return user profile details for a single user specified
+#         by the parameter <username>
+#         """
+#         data = fetch_single_user(username=username)
+#         if data is not None:
+#             serializer = CompositeUserSerializer(data=data)
+#             serializer.is_valid()
+#             return Response(data=serializer.data)
+#         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
 class RegisterUsers(APIView):
@@ -124,7 +129,7 @@ class SingleUserDetails(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, version, format='application\json'):
+    def get(self, request, version, username, format=None):
         """
         Retrieve user profile of the user in the request object
 
@@ -134,7 +139,40 @@ class SingleUserDetails(APIView):
         :param format:
         :return:
         """
-        data = fetch_single_user(username=request.user.username)
-        serializer = CompositeUserSerializer(data=data)
-        serializer.is_valid()
-        return Response(data=serializer.data)
+        if user_is_permitted(request, username):
+            data = fetch_single_user(username=username)
+            if data is not None:
+                serializer = CompositeUserSerializer(data=data)
+                serializer.is_valid()
+                return Response(data=serializer.data)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+    def put(self, request, version, username, format=None):
+        """
+        Update user profile of the user in the request object
+
+        :param request:
+        :param version:
+        :param username:
+        :param format:
+        :return:
+        """
+        if user_is_permitted(request, username):
+            data = {
+                'username': username,
+                'email': request.data.get('email', ''),
+                'first_name': request.data.get('first_name', ''),
+                'last_name': request.data.get('last_name', ''),
+                'description': request.data.get('description', '')
+            }
+            if update_user_profile(data=data):
+                serializer = CompositeUserSerializer(
+                    data=fetch_single_user(
+                        username=request.user.username
+                    )
+                )
+                serializer.is_valid()
+                return Response(data=serializer.data)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_401_UNAUTHORIZED)

@@ -28,26 +28,59 @@ class UserProfileTest(AuthBaseTest):
         url = reverse(
             'shop_list_api:shop-list-api-user',
             kwargs={
-                'version': 'v1'
+                'version': 'v1',
+                'username': 'test_user'
             }
         )
         self.login_client()
         response = self.client.get(url)
         serialized = self.get_expected_single_user_profile()
         # assert that the data is as expected
-        self.assertEqual(response.data[0]['first_name'], serialized.data['first_name'])
-        self.assertEqual(response.data[0]['last_name'], serialized.data['last_name'])
-        self.assertEqual(response.data[0]['email'], serialized.data['email'])
-        self.assertEqual(response.data[0]['description'], serialized.data['description'])
-        self.assertEqual(response.data[0]['date_joined'], serialized.data['date_joined'])
+        self.assertEqual(response.data['first_name'], serialized.data['first_name'])
+        self.assertEqual(response.data['last_name'], serialized.data['last_name'])
+        self.assertEqual(response.data['email'], serialized.data['email'])
+        self.assertEqual(response.data['description'], serialized.data['description'])
+        self.assertEqual(response.data['date_joined'], serialized.data['date_joined'])
         # assert status code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_update_own_user_profile(self):
+        """
+        Test if the logged in user can update their own user profile
+        :return:
+        """
+        url = reverse(
+            'shop_list_api:shop-list-api-user',
+            kwargs={
+                'version': 'v1',
+                'username': 'test_user'
+            }
+        )
+        self.login_client()
+        response = self.client.put(
+            url,
+            data=json.dumps({
+                # optional user data
+                'email': 'change@mail.com',
+                'first_name': 'change',
+                'last_name': 'user',
+                'description': 'yet another change user'
+            }),
+            content_type='application/json'
+        )
+        # assert status code is 200
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # assert that the data is as expected
+        self.assertEqual(response.data['first_name'], "change")
+        self.assertEqual(response.data['last_name'], "user")
+        self.assertEqual(response.data['email'], "change@mail.com")
+        self.assertEqual(response.data['description'], "yet another change user")
 
     def test_get_a_single_non_existing_user_profile(self):
         # test if admin user can retrieve a non existing single user profile
         # by supplying an invalid username in the url
         url = reverse(
-            'shop_list_api:shop-list-manage-user',
+            'shop_list_api:shop-list-api-user',
             kwargs={
                 'version': 'v1',
                 'username': 'testuser'
@@ -62,7 +95,7 @@ class UserProfileTest(AuthBaseTest):
         # test if admin user can retrieve a existing single user profile
         # by supplying an invalid username in the url
         url = reverse(
-            'shop_list_api:shop-list-manage-user',
+            'shop_list_api:shop-list-api-user',
             kwargs={
                 'version': 'v1',
                 'username': 'test_user'
