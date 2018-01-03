@@ -1,0 +1,11 @@
+[report]
+omit =
+    manage.py
+    api/admin.py
+    api/apps.py
+    api/__init__.py
+    config/*
+    */tests/*
+    */migrations/*
+    */python?.?/*
+    */site-packages/nose/*
