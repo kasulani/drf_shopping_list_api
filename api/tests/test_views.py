@@ -9,13 +9,13 @@ class UserProfileTest(AuthBaseTest):
     Tests for the /users/ endpoints
     """
 
-    def test_get_all_user_profile(self):
+    def test_get_all_user_profiles(self):
         # test if you can get all user profiles
         url = reverse(
             'shop_list_api:shop-list-api-all-users',
             kwargs={'version': 'v1'}
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.get(url)
         serialized = self.get_all_expected_user_profiles()
         # assert data is as expected
@@ -23,7 +23,16 @@ class UserProfileTest(AuthBaseTest):
         # assert status code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # TODO: test get all users with a non admin user
+    def test_get_all_user_profiles_with_a_non_admin_user(self):
+        # test if a non admin can retrieve all user profiles
+        url = reverse(
+            'shop_list_api:shop-list-api-all-users',
+            kwargs={'version': 'v1'}
+        )
+        self.login_client('other_test_user', 'other_testing')
+        response = self.client.get(url)
+        # assert status code 403 FORBIDDEN
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_own_user_profile(self):
         # test if you can retrieve a logged in user profile
@@ -34,7 +43,7 @@ class UserProfileTest(AuthBaseTest):
                 'username': 'test_user'
             }
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.get(url)
         serialized = self.get_expected_single_user_profile()
         # assert that the data is as expected
@@ -46,7 +55,19 @@ class UserProfileTest(AuthBaseTest):
         # assert status code
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    # TODO: test if a non admin user can view another person's account
+    def test_get_another_user_profile_with_a_non_admin_user(self):
+        # test if a non admin can retrieve another user's profile
+        url = reverse(
+            'shop_list_api:shop-list-api-user',
+            kwargs={
+                'version': 'v1',
+                'username': 'test_user'
+            }
+        )
+        self.login_client('other_test_user', 'other_testing')
+        response = self.client.get(url)
+        # assert status code 401 UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_update_own_user_profile(self):
         """
@@ -60,7 +81,7 @@ class UserProfileTest(AuthBaseTest):
                 'username': 'test_user'
             }
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.put(
             url,
             data=json.dumps({
@@ -80,7 +101,29 @@ class UserProfileTest(AuthBaseTest):
         self.assertEqual(response.data['email'], "change@mail.com")
         self.assertEqual(response.data['description'], "yet another change user")
 
-    # TODO: test if a non admin user can update another person's account
+    def test_update_a_user_profile_with_non_admin_user(self):
+        # test if a non admin can update another user's profile
+        url = reverse(
+            'shop_list_api:shop-list-api-user',
+            kwargs={
+                'version': 'v1',
+                'username': 'test_user'
+            }
+        )
+        self.login_client('other_test_user', 'other_testing')
+        response = self.client.put(
+            url,
+            data=json.dumps({
+                # optional user data
+                'email': 'change@mail.com',
+                'first_name': 'change',
+                'last_name': 'user',
+                'description': 'yet another change user'
+            }),
+            content_type='application/json'
+        )
+        # assert status code 401 UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_update_a_non_existing_user_profile(self):
         """
@@ -94,7 +137,7 @@ class UserProfileTest(AuthBaseTest):
                 'username': 'tester_user'
             }
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.put(
             url,
             data=json.dumps({
@@ -119,7 +162,7 @@ class UserProfileTest(AuthBaseTest):
                 'username': 'testuser'
             }
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.get(url)
         # assert status code
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -134,7 +177,7 @@ class UserProfileTest(AuthBaseTest):
                 'username': 'test_user'
             }
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.get(url)
         serialized = self.get_expected_single_user_profile()
         # assert data is as expected
@@ -198,7 +241,7 @@ class AuthResetUserPasswordTest(AuthBaseTest):
                 'version': 'v1'
             }
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.put(
             url,
             data=json.dumps({
@@ -217,7 +260,7 @@ class AuthResetUserPasswordTest(AuthBaseTest):
                 'version': 'v1'
             }
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.put(
             url,
             data=json.dumps({
@@ -287,7 +330,7 @@ class AuthLogoutUserTest(AuthBaseTest):
                 'version': 'v1'
             }
         )
-        self.login_client()
+        self.login_client('test_user', 'testing')
         response = self.client.get(url)
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
