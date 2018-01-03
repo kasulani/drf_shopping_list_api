@@ -273,3 +273,32 @@ class AuthLoginUserTest(AuthBaseTest):
         )
         # assert status code is 401 UNAUTHORIZED
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+
+
+class AuthLogoutUserTest(AuthBaseTest):
+    """
+    Tests for the /auth/logout/
+    """
+
+    def test_logout_user(self):
+        url = reverse(
+            'shop_list_api:shop-list-api-logout-user',
+            kwargs={
+                'version': 'v1'
+            }
+        )
+        self.login_client()
+        response = self.client.get(url)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_logout_user_with_out_login(self):
+        url = reverse(
+            'shop_list_api:shop-list-api-logout-user',
+            kwargs={
+                'version': 'v1'
+            }
+        )
+        response = self.client.get(url)
+        # assert status code is 401 UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)

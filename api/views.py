@@ -2,7 +2,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView, status
 from rest_framework.generics import (
     UpdateAPIView,
-    CreateAPIView
+    CreateAPIView,
+    ListAPIView
 )
 from rest_framework.permissions import (
     IsAuthenticated,
@@ -218,3 +219,21 @@ class LoginUser(CreateAPIView):
             serializer.is_valid()
             return Response(serializer.data)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+
+class LogoutUser(ListAPIView):
+    """
+    View to logout a user.
+
+    * You have to have logged in to be able logout
+    """
+
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        return User.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return Response(status=status.HTTP_200_OK)
