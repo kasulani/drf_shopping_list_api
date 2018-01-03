@@ -149,7 +149,7 @@ class UserProfileTest(AuthBaseTest):
 
 class AuthRegisterUserTest(AuthBaseTest):
     """
-    Tests for /auth/register endpoint
+    Tests for /auth/register/ endpoint
     """
 
     def test_create_a_user_profile_with_valid_data(self):
@@ -187,7 +187,7 @@ class AuthRegisterUserTest(AuthBaseTest):
 
 class AuthResetUserPasswordTest(AuthBaseTest):
     """
-    Tests for the /auth/reset-password endpoint
+    Tests for the /auth/reset-password/ endpoint
     """
 
     def test_reset_user_password_with_valid_data(self):
@@ -227,3 +227,49 @@ class AuthResetUserPasswordTest(AuthBaseTest):
         )
         # assert status code
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class AuthLoginUserTest(AuthBaseTest):
+    """
+    Tests for the /auth/login/ endpoint
+    """
+
+    def test_login_user_with_valid_credentials(self):
+        # test logging in with valid credentials
+        url = reverse(
+            'shop_list_api:shop-list-api-login-user',
+            kwargs={
+                'version': 'v1'
+            }
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps({
+                'username': 'test_user',
+                'password': 'testing'
+            }),
+            content_type='application/json'
+        )
+        # assert token key exists
+        self.assertIn('token', response.data)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_login_user_with_invalid_credentials(self):
+        # test logging in with invalid credentials
+        url = reverse(
+            'shop_list_api:shop-list-api-login-user',
+            kwargs={
+                'version': 'v1'
+            }
+        )
+        response = self.client.post(
+            url,
+            data=json.dumps({
+                'username': 'user',
+                'password': 'tester'
+            }),
+            content_type='application/json'
+        )
+        # assert status code is 401 UNAUTHORIZED
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
