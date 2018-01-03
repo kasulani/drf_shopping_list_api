@@ -20,8 +20,3 @@ class UserProfile(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
     # one to one field to the User model in django auth
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-
-    def __repr__(self):
-        # this is the string representation of the UserProfile object
-        user = self.user.objects.all()
-        return '<User: %s>' % user.username
