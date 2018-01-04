@@ -37,4 +37,4 @@ class ShoppingList(models.Model):
     # when the shopping list was last updated
     updated_on = models.DateTimeField(auto_now=True)
     # owner of the list
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
