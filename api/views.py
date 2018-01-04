@@ -115,7 +115,7 @@ class SingleUserDetails(APIView):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, version, username, format=None):
+    def get(self, request, format=None, **kwargs):
         """
         Retrieve user profile of the user in the request object
 
@@ -125,6 +125,7 @@ class SingleUserDetails(APIView):
         :param format:
         :return:
         """
+        username = kwargs['username']
         if user_is_permitted(request, username):
             data = fetch_single_user(username=username)
             if data is not None:
@@ -134,16 +135,15 @@ class SingleUserDetails(APIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
         return Response(status=status.HTTP_401_UNAUTHORIZED)
 
-    def put(self, request, version, username, format=None):
+    def put(self, request, format=None, **kwargs):
         """
         Update user profile of the user in the request object
 
         :param request:
-        :param version:
-        :param username:
         :param format:
         :return:
         """
+        username = kwargs['username']
         if user_is_permitted(request, username):
             data = {
                 'username': username,
