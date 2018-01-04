@@ -1,8 +1,11 @@
 engines:
   pep8:
     enabled: true
-#exclude_paths:
-#- "test_shoplist.py"
+exclude_patterns:
+- "api/tests/"
+- "api/migrations/"
+- "**/tests/"
+- "**/migrations/"
 ratings:
   paths:
   - "**.py"
