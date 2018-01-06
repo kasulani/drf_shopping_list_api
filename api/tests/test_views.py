@@ -486,3 +486,29 @@ class ShoppingListsTest(ShoppingListBaseTest):
         )
         # assert status code is 404 NOT FOUND
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_an_existing_shopping_list(self):
+        url = reverse(
+            'shop_list_api:shop-list-api-shopping-lists-detail',
+            kwargs={
+                'version': 'v1',
+                'pk': self.get_a_shopping_list_id()
+            }
+        )
+        self.login_client('test_user', 'testing')
+        response = self.client.delete(url)
+        # assert status code is 204 NO CONTENT
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+    def test_delete_a_non_existing_shopping_list(self):
+        url = reverse(
+            'shop_list_api:shop-list-api-shopping-lists-detail',
+            kwargs={
+                'version': 'v1',
+                'pk': 300
+            }
+        )
+        self.login_client('test_user', 'testing')
+        response = self.client.delete(url)
+        # assert status code is 404 NOT FOUND
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
