@@ -247,3 +247,31 @@ class ShoppingLists(viewsets.ModelViewSet):
     serializer_class =ShoppingListSerializer
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Adds a new shopping list
+
+        Note:
+        This method responds with 200 OK even when
+        you post invalid
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        new_list = ShoppingList.objects.create(
+            name=request.data.get('name', ''),
+            description=request.data.get('description', ''),
+            user=request.user
+        )
+        serializer = ShoppingListSerializer(
+            data={
+                'name': new_list.name,
+                'description': new_list.description
+            })
+        serializer.is_valid()
+        return Response(
+            data=serializer.data
+        )

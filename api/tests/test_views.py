@@ -406,3 +406,41 @@ class ShoppingListsTest(ShoppingListBaseTest):
         response = self.client.get(url)
         # assert status code is 404 NOT FOUND
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_a_shopping_list_with_valid_data(self):
+        url = reverse(
+            'shop_list_api:shop-list-api-shopping-lists',
+            kwargs={
+                'version': 'v1'
+            }
+        )
+        self.login_client('test_user', 'testing')
+        response = self.client.post(
+            url,
+            data=json.dumps({
+                'name': 'test_list_3',
+                'description': 'describe test list 3'
+            }),
+            content_type='application/json'
+        )
+        # assert data is as expected
+        self.assertEqual(response.data['name'], 'test_list_3')
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    # def test_create_a_shopping_list_with_invalid_data(self):
+    #     url = reverse(
+    #         'shop_list_api:shop-list-api-shopping-lists',
+    #         kwargs={
+    #             'version': 'v1'
+    #         }
+    #     )
+    #     self.login_client('test_user', 'testing')
+    #     response = self.client.post(
+    #         url,
+    #         data=json.dumps({}),
+    #         content_type='application/json'
+    #     )
+    #     print(response.data)
+    #     # assert status code is 400 BAD REQUEST
+    #     self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
