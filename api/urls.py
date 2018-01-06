@@ -5,12 +5,25 @@ from .views import (
     SingleUserDetails,
     ResetUserPassword,
     LoginUser,
-    LogoutUser
+    LogoutUser,
+    ShoppingLists
     # ManageAPIUsers
 )
 from rest_framework.urlpatterns import format_suffix_patterns
 
 app_name = 'shop_list_api'
+
+# binding view sets to urls explicitly
+shopping_lists = ShoppingLists.as_view(actions={
+    'get': 'list',
+    'post': 'create'
+})
+
+shopping_lists_detail = ShoppingLists.as_view(actions={
+    'get': 'retrieve',
+    'put': 'update',
+    'delete': 'destroy'
+})
 
 urlpatterns = format_suffix_patterns([
     re_path('^auth/register/$',
@@ -35,5 +48,13 @@ urlpatterns = format_suffix_patterns([
 
     re_path('^users/(?P<username>[\w.@+-]+)/$',
             SingleUserDetails.as_view(),
-            name='shop-list-api-user')
+            name='shop-list-api-user'),
+
+    re_path('^shoppinglists/$',
+            shopping_lists,
+            name='shop-list-api-shopping-lists'),
+
+    re_path('^shoppinglists/(?P<pk>[0-9]+)/$',
+            shopping_lists_detail,
+            name='shop-list-api-shopping-lists-detail')
 ])
