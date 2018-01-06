@@ -1,15 +1,15 @@
 from rest_framework.test import APITestCase, APIClient
-from api.models import UserProfile
+from api.models import UserProfile, ShoppingList
 from django.contrib.auth.models import User
 from django.urls import reverse
 from api.serializers import (
-    # UserProfileSerializer,
+    ShoppingListSerializer,
     CompositeUserSerializer
 )
 import json
 
 
-class AuthBaseTest(APITestCase):
+class BaseTest(APITestCase):
     """
     Base Test for Auth endpoints and models
     """
@@ -89,6 +89,9 @@ class AuthBaseTest(APITestCase):
         )
         self.client.login(username=username, password=password)
 
+
+class AuthBaseTest(BaseTest):
+
     @staticmethod
     def get_all_expected_user_profiles():
         # get all user profiles in the db and return as a serialized object
@@ -119,3 +122,45 @@ class AuthBaseTest(APITestCase):
         )
         serializer.is_valid()
         return serializer
+
+
+class ShoppingListBaseTest(BaseTest):
+
+    def setUp(self):
+        super().setUp()
+        self.query_set = ShoppingList.objects.all()
+        # create two shopping lists for testing
+        self.add_a_shopping_list({
+            'name': 'test_list_1',
+            'description': 'describe test list 1',
+            'user': self.user
+        })
+        self.add_a_shopping_list({
+            'name': 'test_list_2',
+            'description': 'describe test list 2',
+            'user': self.user
+        })
+
+    @staticmethod
+    def add_a_shopping_list(data):
+        ShoppingList.objects.create(
+            name=data.get('name', ''),
+            description=data.get('description', ''),
+            user=data.get('user', '')
+        )
+
+    def get_a_shopping_list_id(self):
+        a_list = self.query_set.filter(name="test_list_1")
+        return a_list[0].id
+
+    def get_all_shopping_lists(self):
+        results = []
+        for a_list in self.query_set:
+            results.append({
+                'id': a_list.id,
+                'name': a_list.name,
+                'description': a_list.description,
+                'created_on': a_list.created_on,
+                'updated_on': a_list.updated_on
+            })
+        return ShoppingListSerializer(results, many=True).data

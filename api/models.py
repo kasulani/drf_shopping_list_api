@@ -14,9 +14,27 @@ class UserProfile(models.Model):
     objects = models.Manager()
     # one sentence description about the user
     description = models.CharField(max_length=255, null=True)
-    # when the user profile was updated
+    # when the user profile was created
     created_on = models.DateTimeField(auto_now_add=True)
     # when the user profile was last updated
     updated_on = models.DateTimeField(auto_now=True)
     # one to one field to the User model in django auth
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+
+class ShoppingList(models.Model):
+    """
+    Shopping List model
+    """
+    # explicitly set default manager
+    objects = models.Manager()
+    # shopping list name
+    name = models.CharField(max_length=255)
+    # short description about the list
+    description = models.CharField(max_length=255, null=True)
+    # when the shopping list was created
+    created_on = models.DateTimeField(auto_now_add=True)
+    # when the shopping list was last updated
+    updated_on = models.DateTimeField(auto_now=True)
+    # owner of the list
+    user = models.ForeignKey(User, on_delete=models.CASCADE)

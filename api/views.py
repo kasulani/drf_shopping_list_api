@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView, status
+from rest_framework import viewsets
 from rest_framework.generics import (
     UpdateAPIView,
     CreateAPIView,
@@ -13,7 +14,7 @@ from rest_framework.permissions import (
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from api.serializers import (
     # UserProfileSerializer,
-    # UserSerializer,
+    ShoppingListSerializer,
     CompositeUserSerializer,
     TokenSerializer
 )
@@ -24,6 +25,7 @@ from api.utils import (
     update_user_profile,
     user_is_permitted
 )
+from api.models import ShoppingList
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework_jwt.settings import api_settings
@@ -234,3 +236,42 @@ class LogoutUser(ListAPIView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return Response(status=status.HTTP_200_OK)
+
+
+class ShoppingLists(viewsets.ModelViewSet):
+    """
+    Shopping Lists CRUD endpoints
+    """
+
+    queryset = ShoppingList.objects.all()
+    serializer_class =ShoppingListSerializer
+    authentication_classes = (JSONWebTokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request, *args, **kwargs):
+        """
+        Adds a new shopping list
+
+        Note:
+        This method responds with 200 OK even when
+        you post invalid
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        new_list = ShoppingList.objects.create(
+            name=request.data.get('name', ''),
+            description=request.data.get('description', ''),
+            user=request.user
+        )
+        serializer = ShoppingListSerializer(
+            data={
+                'name': new_list.name,
+                'description': new_list.description
+            })
+        serializer.is_valid()
+        return Response(
+            data=serializer.data
+        )
