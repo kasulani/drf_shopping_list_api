@@ -50,6 +50,8 @@ class Item(models.Model):
     name = models.CharField(max_length=255)
     # short description about the item
     description = models.CharField(max_length=255, null=True)
+    # bought status - bool field to indicate if or not bought
+    bought = models.BooleanField(default=False)
     # when the item was added
     created_on = models.DateTimeField(auto_now_add=True)
     # when the item was last updated
