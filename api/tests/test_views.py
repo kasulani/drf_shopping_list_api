@@ -691,6 +691,28 @@ class ItemsTest(ItemBaseTest):
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_update_an_item_with_invalid_data(self):
+        # test updating an existing item on an existing list
+        # with invalid data
+        url = reverse(
+            'shop_list_api:shopping-lists-items-detail',
+            kwargs={
+                'version': 'v1',
+                'item_id': self.get_a_item_id()
+            }
+        )
+        self.login_client('test_user', 'testing')
+        response = self.client.put(
+            url,
+            data=json.dumps({
+                'name': '',
+                'description': ''
+            }),
+            content_type='application/json'
+        )
+        # assert status code is 400 BAD REQUEST
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_update_a_non_existing_item(self):
         # test updating a non existing item on an existing list
         url = reverse(
