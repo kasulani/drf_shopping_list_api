@@ -20,8 +20,8 @@ def user_is_permitted(request, username):
     :param username:
     :return: bool
     """
-    return request.user.username == username \
-           or request.user.is_superuser
+    return \
+        request.user.username == username or request.user.is_superuser
 
 
 def fetch_all_user_profiles():
