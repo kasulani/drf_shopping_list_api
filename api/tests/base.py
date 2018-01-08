@@ -1,9 +1,10 @@
 from rest_framework.test import APITestCase, APIClient
-from api.models import UserProfile, ShoppingList
+from api.models import UserProfile, ShoppingList, Item
 from django.contrib.auth.models import User
 from django.urls import reverse
 from api.serializers import (
     ShoppingListSerializer,
+    ItemsSerializer,
     CompositeUserSerializer
 )
 import json
@@ -164,3 +165,27 @@ class ShoppingListBaseTest(BaseTest):
                 'updated_on': a_list.updated_on
             })
         return ShoppingListSerializer(results, many=True).data
+
+
+class ItemBaseTest(ShoppingListBaseTest):
+
+    def setUp(self):
+        super().setUp()
+        a_list = self.query_set.filter(name="test_list_1")
+        # add a test item
+        self.item = Item.objects.create(
+            name='test item 1',
+            description='test item description',
+            the_list=a_list[0]
+        )
+
+    def get_a_item_id(self):
+        return self.item.id
+
+    def get_shopping_list_item(self):
+        serializer = ItemsSerializer(data={
+            'name': self.item.name,
+            'description': self.item.description
+        })
+        serializer.is_valid()
+        return serializer.data

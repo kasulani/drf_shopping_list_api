@@ -1,5 +1,6 @@
 from api.models import UserProfile
 from django.contrib.auth.models import User
+from api.serializers import ItemsSerializer
 
 # utility functions and classes
 
@@ -147,3 +148,40 @@ def update_user_profile(data):
         return updated
     except Exception:
         return False
+
+
+def serialize_item(item):
+    """
+    This function serializes a single
+    shopping list item
+
+    :param item:
+    :return:
+    """
+    serializer = ItemsSerializer(data={
+        'id': item.id,
+        'name': item.name,
+        'description': item.description,
+        'bought': item.bought
+    })
+    serializer.is_valid()
+    return serializer
+
+
+def items_results_set(items):
+    """
+    This functions returns a results set that can be
+    serialized
+
+    :param items: raw query set
+    :return:
+    """
+    results = []
+    for item in items:
+        results.append({
+            'id': item.id,
+            'name': item.name,
+            'description': item.description,
+            'bought': item.bought
+        })
+    return results
