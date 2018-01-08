@@ -253,7 +253,6 @@ class ShoppingLists(viewsets.ModelViewSet):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    # TODO: Admin user can view all shopping lists
     # TODO: pagination
 
     def list(self, request, *args, **kwargs):
