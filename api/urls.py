@@ -6,8 +6,10 @@ from .views import (
     ResetUserPassword,
     LoginUser,
     LogoutUser,
-    ShoppingLists
-    # ManageAPIUsers
+    ShoppingLists,
+    ItemsListCreate,
+    ItemsDetails,
+    ListAllItems
 )
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -56,5 +58,17 @@ urlpatterns = format_suffix_patterns([
 
     re_path('^shoppinglists/(?P<pk>[0-9]+)/$',
             shopping_lists_detail,
-            name='shop-list-api-shopping-lists-detail')
+            name='shop-list-api-shopping-lists-detail'),
+
+    re_path('^shoppinglists/items/$',
+            ListAllItems.as_view(),
+            name='shopping-lists-all-items'),
+
+    re_path('^shoppinglists/(?P<list_id>[0-9]+)/items/$',
+            ItemsListCreate.as_view(),
+            name='shopping-lists-items'),
+
+    re_path('^shoppinglists/items/(?P<item_id>[0-9]+)/$',
+            ItemsDetails.as_view(),
+            name='shopping-lists-items-detail')
 ])

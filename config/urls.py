@@ -19,10 +19,21 @@ from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path(
         'api-auth/',
-        include('rest_framework.urls', namespace='rest_framework')
+        include(
+            'rest_framework.urls',
+            namespace='rest_framework'
+        )
     ),
-    re_path('^api-token-auth/', obtain_jwt_token, name='create-token'),
-    re_path('(?P<version>(v1|v2))/', include('api.urls', namespace='shop_list_api')),
+
+    re_path('^api-token-auth/',
+            obtain_jwt_token,
+            name='create-token'),
+
+    re_path('(?P<version>(v1|v2))/',
+            include(
+                'api.urls',
+                namespace='shop_list_api')),
 ]
