@@ -6,6 +6,7 @@ exclude_patterns:
 - "api/migrations/"
 - "**/tests/"
 - "**/migrations/"
+- "config/"
 ratings:
   paths:
   - "**.py"

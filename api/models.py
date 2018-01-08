@@ -38,3 +38,23 @@ class ShoppingList(models.Model):
     updated_on = models.DateTimeField(auto_now=True)
     # owner of the list
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+
+class Item(models.Model):
+    """
+    Shopping List Items model
+    """
+    # explicitly set default manager
+    objects = models.Manager()
+    # shopping list item name
+    name = models.CharField(max_length=255)
+    # short description about the item
+    description = models.CharField(max_length=255, null=True)
+    # bought status - bool field to indicate if or not bought
+    bought = models.BooleanField(default=False)
+    # when the item was added
+    created_on = models.DateTimeField(auto_now_add=True)
+    # when the item was last updated
+    updated_on = models.DateTimeField(auto_now=True)
+    # list the item belongs to
+    the_list = models.ForeignKey(ShoppingList, on_delete=models.CASCADE)

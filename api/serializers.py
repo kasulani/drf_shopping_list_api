@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import ShoppingList
+from api.models import ShoppingList, Item
 # from django.contrib.auth.models import User
 
 
@@ -31,6 +31,15 @@ class ShoppingListSerializer(serializers.ModelSerializer):
         model = ShoppingList
         # fields = '__all__'
         exclude = ('user',)
+
+
+class ItemsSerializer(serializers.ModelSerializer):
+    """
+    Serializer for the shopping list items model
+    """
+    class Meta:
+        model = Item
+        exclude = ('the_list',)
 
 # class UserSerializer(serializers.ModelSerializer):
 #     """
