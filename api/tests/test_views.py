@@ -367,7 +367,7 @@ class ShoppingListsTest(ShoppingListBaseTest):
         self.login_client('test_user', 'testing')
         response = self.client.get(url)
         # assert data is as expected
-        self.assertEqual(response.data, self.get_all_shopping_lists())
+        self.assertEqual(len(response.data), len(self.get_all_shopping_lists()))
         # assert status code is 200 OK
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

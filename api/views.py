@@ -253,9 +253,27 @@ class ShoppingLists(viewsets.ModelViewSet):
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
 
-    # TODO: GET all lists that belong to the user in the request object
     # TODO: Admin user can view all shopping lists
     # TODO: pagination
+
+    def list(self, request, *args, **kwargs):
+        """
+        get all shopping lists as per user logged in
+
+        :param request:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        lists = self.queryset.filter(user=request.user)
+        results = []
+        for a_list in lists:
+            results.append({
+                'id': a_list.id,
+                'name': a_list.name,
+                'description': a_list.description
+            })
+        return Response(ShoppingListSerializer(results, many=True).data)
 
     def create(self, request, *args, **kwargs):
         """
