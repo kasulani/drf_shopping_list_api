@@ -3,7 +3,8 @@ from rest_framework.views import APIView, status
 from rest_framework.generics import (
     UpdateAPIView,
     CreateAPIView,
-    ListAPIView
+    ListAPIView,
+    RetrieveUpdateAPIView
 )
 from rest_framework.permissions import (
     IsAuthenticated,
@@ -29,6 +30,8 @@ from rest_framework_jwt.settings import api_settings
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
 
+from rest_framework.pagination import PageNumberPagination
+
 
 # API endpoint views
 
@@ -41,6 +44,7 @@ class ListAllUsers(APIView):
     """
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAdminUser,)
+    pagination_class = PageNumberPagination
 
     def get(self, request, version, format=None):
         """
@@ -102,7 +106,7 @@ class RegisterUsers(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
-class SingleUserDetails(APIView):
+class SingleUserDetails(RetrieveUpdateAPIView):
     """
     Retrieve, update or delete a user instance.
 

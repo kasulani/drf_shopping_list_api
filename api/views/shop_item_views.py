@@ -13,6 +13,7 @@ from api.utils import (
     serialize_item,
     items_results_set
 )
+from rest_framework.pagination import PageNumberPagination
 
 
 class ListAllItems(ListAPIView):
@@ -21,8 +22,24 @@ class ListAllItems(ListAPIView):
     """
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    pagination_class = PageNumberPagination
 
     def get(self, request, *args, **kwargs):
+        """
+        Example select statement on multiple tables
+        using join
+
+        SELECT TableA.*, TableB.*, TableC.*, TableD.*
+        FROM TableA
+            JOIN TableB
+                ON TableB.aID = TableA.aID
+            JOIN TableC
+                ON TableC.cID = TableB.cID
+            JOIN TableD
+                ON TableD.dID = TableA.dID
+        WHERE DATE(TableC.date)=date(now())
+        """
+
         items = Item.objects.raw(
             "select api_item.id, api_item.name, api_item.description, "
             "api_item.bought, api_shoppinglist.name, auth_user.first_name "
@@ -45,10 +62,12 @@ class ItemsListCreate(ListCreateAPIView):
 
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
+    pagination_class = PageNumberPagination
 
     def get(self, request, *args, **kwargs):
         """
-        Return all items for the logged in user
+        Return all items for the logged in user on a specific
+        shopping list
 
         :param request:
         :param kwargs:
