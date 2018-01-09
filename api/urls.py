@@ -1,12 +1,14 @@
-from django.urls import re_path, include
-from .views import (
+from django.urls import re_path
+from api.views.auth_views import (
     ListAllUsers,
     RegisterUsers,
     SingleUserDetails,
     ResetUserPassword,
     LoginUser,
-    LogoutUser,
-    ShoppingLists,
+    LogoutUser
+)
+from api.views.shop_list_views import ShoppingLists
+from api.views.shop_item_views import (
     ItemsListCreate,
     ItemsDetails,
     ListAllItems
