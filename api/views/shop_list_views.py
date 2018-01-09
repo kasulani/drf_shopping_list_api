@@ -5,7 +5,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import status
-
+from rest_framework.pagination import PageNumberPagination
 
 class ShoppingLists(viewsets.ModelViewSet):
     """
@@ -16,8 +16,7 @@ class ShoppingLists(viewsets.ModelViewSet):
     serializer_class = ShoppingListSerializer
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (IsAuthenticated,)
-
-    # TODO: pagination
+    pagination_class = PageNumberPagination
 
     def list(self, request, *args, **kwargs):
         """
