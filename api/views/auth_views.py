@@ -26,11 +26,10 @@ from api.utils import (
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from rest_framework_jwt.settings import api_settings
+from rest_framework.pagination import PageNumberPagination
 
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
 jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
-
-from rest_framework.pagination import PageNumberPagination
 
 
 # API endpoint views
