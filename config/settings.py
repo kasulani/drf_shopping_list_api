@@ -24,13 +24,11 @@ BASE_DIR = "../" + os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # override the default secret key using the one set in the env variable
 SECRET_KEY = os.getenv('SECRET_KEY') \
-    if(os.getenv('SECRET_KEY')) \
+    if(os.getenv('SECRET_KEY') is not None) \
     else '_w*5*o6uq0x0kg(l8l6z3t23f)(%-7-w-w$z8ka-tnwtg2vk+y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG') \
-    if(os.getenv('DEBUG')) \
-    else True
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -44,7 +42,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.postgres',
     'rest_framework',
     'api',
 ]

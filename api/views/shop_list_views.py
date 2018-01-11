@@ -6,8 +6,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import status
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.generics import ListAPIView
-
 
 class ShoppingLists(viewsets.ModelViewSet):
     """
@@ -66,15 +64,3 @@ class ShoppingLists(viewsets.ModelViewSet):
         return Response(
             data=serializer.data
         )
-
-
-class SearchShoppingLists(ListAPIView):
-    """
-    Search for a shopping list with a given name
-    """
-    serializer_class = ShoppingListSerializer
-
-    def get_queryset(self):
-        q = self.request.query_params.get('q', None)
-        queryset = ShoppingList.objects.filter(user=self.request.user)
-        return queryset.filter(name__icontains=q).order_by('id')
