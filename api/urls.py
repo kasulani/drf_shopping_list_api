@@ -12,7 +12,7 @@ from api.views.shop_item_views import (
     ItemsListCreate,
     ItemsDetails,
     ListAllItems,
-    SearchItems
+    SearchItemByName
 )
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -80,6 +80,6 @@ urlpatterns = format_suffix_patterns([
             name='shopping-lists-items-detail'),
 
     re_path('^shoppinglists/items/search/$',
-            SearchItems.as_view(),
+            SearchItemByName.as_view(),
             name='shopping-lists-items-search')
 ])
