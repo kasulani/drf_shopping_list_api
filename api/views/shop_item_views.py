@@ -170,9 +170,9 @@ class ItemsDetails(RetrieveUpdateDestroyAPIView):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-class SearchItems(ListAPIView):
+class SearchItemByName(ListAPIView):
     """
-    Search for a shopping list item with a given name
+    This view returns results of a search for an item by name
     """
     serializer_class = ItemsSerializer
 
