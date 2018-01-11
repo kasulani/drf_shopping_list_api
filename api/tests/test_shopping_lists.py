@@ -169,3 +169,18 @@ class ShoppingListsTest(ShoppingListBaseTest):
         # assert status code is 404 NOT FOUND
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_search_for_a_list(self):
+        # test search for a list by it's name
+        url = reverse(
+            'shop_list_api:shopping-lists-search',
+            kwargs={
+                'version': 'v1'
+            }
+        )
+        url += '?q=test_list_1'
+        self.login_client('test_user', 'testing')
+        response = self.client.get(url)
+        # assert data is as expected
+        self.assertEqual(len(response.data['results']), 1)
+        # assert status code is 200 OK
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
