@@ -1,1 +1,1 @@
-web: gunicorn -pythonpath drf-api-shopping-list drf_shopping_list_api.config.wsgi --log-file -
+web: gunicorn -pythonpath drf-api-shopping-list config.wsgi --log-file -
