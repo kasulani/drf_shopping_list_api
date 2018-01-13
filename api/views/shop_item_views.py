@@ -168,3 +168,15 @@ class ItemsDetails(RetrieveUpdateDestroyAPIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Item.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+class SearchItemByName(ListAPIView):
+    """
+    This view returns results of a search for an item by name
+    """
+    serializer_class = ItemsSerializer
+
+    def get_queryset(self):
+        q = self.request.query_params.get('q', None)
+        queryset = Item.objects.filter(the_list__user=self.request.user)
+        return queryset.filter(name__icontains=q).order_by('id')

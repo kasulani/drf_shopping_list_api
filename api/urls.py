@@ -7,11 +7,12 @@ from api.views.auth_views import (
     LoginUser,
     LogoutUser
 )
-from api.views.shop_list_views import ShoppingLists
+from api.views.shop_list_views import ShoppingLists, SearchShoppingLists
 from api.views.shop_item_views import (
     ItemsListCreate,
     ItemsDetails,
-    ListAllItems
+    ListAllItems,
+    SearchItemByName
 )
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -58,6 +59,10 @@ urlpatterns = format_suffix_patterns([
             shopping_lists,
             name='shop-list-api-shopping-lists'),
 
+    re_path('^shoppinglists/search/$',
+            SearchShoppingLists.as_view(),
+            name='shopping-lists-search'),
+
     re_path('^shoppinglists/(?P<pk>[0-9]+)/$',
             shopping_lists_detail,
             name='shop-list-api-shopping-lists-detail'),
@@ -72,5 +77,9 @@ urlpatterns = format_suffix_patterns([
 
     re_path('^shoppinglists/items/(?P<item_id>[0-9]+)/$',
             ItemsDetails.as_view(),
-            name='shopping-lists-items-detail')
+            name='shopping-lists-items-detail'),
+
+    re_path('^shoppinglists/items/search/$',
+            SearchItemByName.as_view(),
+            name='shopping-lists-items-search')
 ])
