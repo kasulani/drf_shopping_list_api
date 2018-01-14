@@ -42,7 +42,13 @@ To run this application, clone the repository on your local machine and execute 
     $ python manage.py migrate
     $ nohup python manage.py runserver & disown
 ```
-
+## Base URL for the API
+The base url for this api is https://drf-api-shopping-list.herokuapp.com/ in case you want to try out this API endpoints
+using curl or postman from your computer with out cloning this repository. For example, on linux commandline issue this
+curl command to login (you will need to first register to login, please see documentation).
+```
+curl -H "Content-Type: application/json" -X POST -d '{"username":"foo@bar.com","password":"foobar"}' https://drf-api-shopping-list.herokuapp.com/auth/login/
+```
 #### Endpoints to create a user account and login into the application
 HTTP Method|End point | Public Access|Action
 -----------|----------|--------------|------
