@@ -29,7 +29,7 @@ Tools used during the development of this API are;
 - Use Django 2.x.x+
 ## Tests
 "Code without tests is broken as designed", said  [Jacob Kaplan-Moss](https://jacobian.org/writing/django-apps-with-buildout/#s-create-a-test-wrapper). Therefore i shall not give you code that
-can not be tested or be tested. So, to run tests, enter the following command
+can not be tested or has no tests. So, to run tests, enter the following command
 > python manage.py test
 ## Running the application
 To run this application, clone the repository on your local machine and execute the following command.
