@@ -28,9 +28,9 @@ SECRET_KEY = os.getenv('SECRET_KEY') \
     else '_w*5*o6uq0x0kg(l8l6z3t23f)(%-7-w-w$z8ka-tnwtg2vk+y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['drf-api-shopping-list.herokuapp.com']
 
 
 # Application definition
